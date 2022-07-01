@@ -8,9 +8,23 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
     $myfile = fopen("Generated_Scripts/"."$singularName".".php", "w") or die("Unable to open file!");
     
     $tablePK = "";
+    $tablePKWithType = "";
+    $tablePKWithTypeStatic = "";
+
     foreach ($tableInfo as $key => $value) {
         if ($value["Key"] == 'PRI') {
+            
             $tablePK = $value["Field"];
+
+            if ($value["Type"] == 'bigint' || $value["Type"] == 'int') {
+                $tablePKWithType = 'intval($_GET["id"])';
+                $tablePKWithTypeStatic = 'intval($this->viewData["'.$tablePK.'"])';
+            }else{
+                $tablePKWithType = '$_GET["id"]';
+                $tablePKWithTypeStatic = '$this->viewData["'.$tablePK.'"]';
+            }
+
+        
         } 
     }
 
@@ -55,7 +69,8 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
     }';
 
     $varInit = "";
-    $varCRUDSet = "";
+    $varCRUDSetInsert = "";
+    $varCRUDSetUpdate = "";
     $arrSet = "";
     $arrOptions = "";
 
@@ -63,7 +78,11 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
         $varInit = $varInit ."\t\t". '$this->viewData["'.$value["Field"].'"] = "";'."\n\t";
         
         if ($value["Key"] != 'PRI') {
-            $varCRUDSet .= '$this->viewData["'.$value["Field"].'"],'."\n\t\t\t\t\t\t";
+            $varCRUDSetInsert .= '$this->viewData["'.$value["Field"].'"],'."\n\t\t\t\t\t\t";
+            $varCRUDSetUpdate .= '$this->viewData["'.$value["Field"].'"],'."\n\t\t\t\t\t\t";
+        }
+        else if ($value["Key"] == 'PRI' && $value["Extra"] != 'auto_increment') {
+            $varCRUDSetInsert .= '$this->viewData["'.$value["Field"].'"],'."\n\t\t\t\t\t\t";
         }
 
         if (($value["Null"] == 'NO' && $value["Key"] != 'PRI') || (in_array($value["Field"], $validationFields) && $value["Null"] != 'NO')) {
@@ -144,7 +163,7 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
                 }
             }
             if ($this->viewData["mode"] !== "INS" && isset($_GET["id"])) {
-                $this->viewData["'.$tablePK.'"] = intval($_GET["id"]);
+                $this->viewData["'.$tablePK.'"] = '.$tablePKWithType.';
                 $tmpArray = '.$pluralName.'::getById($this->viewData["'.$tablePK.'"]);
                 \Utilities\ArrUtils::mergeFullArrayTo($tmpArray, $this->viewData);
             }
@@ -204,7 +223,7 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
                 switch($this->viewData["mode"]) {
                 case "INS":
                     $result = '.$pluralName.'::insert(
-                        '.$varCRUDSet.'
+                        '.$varCRUDSetInsert.'
                     );
 
                     if ($result) {
@@ -217,8 +236,8 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
 
                 case "UPD":
                     $result = '.$pluralName.'::update(
-                        '.$varCRUDSet.'
-                        intval($this->viewData["'.$tablePK.'"])
+                        '.$varCRUDSetUpdate.'
+                        '.$tablePKWithTypeStatic.'
                     );
 
                     if ($result) {
@@ -231,7 +250,7 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
 
                 case "DEL":
                     $result = '.$pluralName.'::delete(
-                        intval($this->viewData["'.$tablePK.'"])
+                        '.$tablePKWithTypeStatic.'
                     );
 
                     if ($result) {
@@ -244,7 +263,6 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
                 }
             }
         }';
-
 
     $processViewFunction=
     '
@@ -281,7 +299,6 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
     }?>';
 
 
-    
 
     fwrite($myfile, 
         $importsAndHeads. 

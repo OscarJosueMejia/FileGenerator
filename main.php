@@ -32,7 +32,7 @@
             $tableModel = new GetTableDesc();
 
             $TableData = $tableModel->getData($_POST["tableName"]);
-            
+
             if ($TableData == false) {
                 $showError = true;
                 $errorLog = "There is a problem with Table or it does not exists.";
@@ -79,6 +79,18 @@
 
         <div style="margin-left: 15vh; margin-right:15vh; margin-top:8vh">
 
+            <?php if ($showError) {?>
+                <div class="alert alert-danger mt-3" role="alert">
+                    <?php echo $errorLog; ?>
+                    </div>
+            <?php } ?>
+
+            <?php if ($showAlert) {?>
+                <div class="alert alert-success mt-3" role="alert">
+                    <?php echo $successMsg; ?>
+                    </div>
+            <?php } ?>
+
             <div class="form-group">
                 <label for="tableName">Table Name</label>
                 <input type="text" class="form-control" id="tableName" name="tableName" placeholder="Pianos" required>
@@ -108,18 +120,6 @@
                 <label for="validationFields">Field that need a [not empty] validation (Separated with comma). System will automatically take Fields from table with Null = false</label>
                 <input type="text" class="form-control" id="validationFields" name="validationFields" placeholder="pianodsc, pianocat">
             </div>
-
-            <?php if ($showError) {?>
-                <div class="alert alert-danger mt-3" role="alert">
-                    <?php echo $errorLog; ?>
-                    </div>
-            <?php } ?>
-
-            <?php if ($showAlert) {?>
-                <div class="alert alert-success mt-3" role="alert">
-                    <?php echo $successMsg; ?>
-                    </div>
-            <?php } ?>
 
             <div class="text-center mt-5">
                 <button type="submit" name="btnConfirm" class="btn btn-primary mb-2">Generate</button>       

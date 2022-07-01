@@ -8,21 +8,31 @@ function writeOnFile_DAO($tableNames, $tableInfo){
     $myfile = fopen("Generated_Scripts/Dao/"."$pluralName".".php", "w") or die("Unable to open file!");
     
     $tablePK = "";
-    $paramsList = "";
+    $paramsListInsert = "";
+    $paramsListUpdate = "";
     $queryFirstParams = "";
     $querySecondParams = "";
     $associativeParams = "";
-    $sqlParams = "";
+    $sqlParamsInsert = "";
+    $sqlParamsUpdate = "";
 
     foreach ($tableInfo as $key => $value) {
 
         if (($value["Key"] != 'PRI')) {
-            $paramsList .= '$'.$value["Field"].",\n\t\t\t";
+            $paramsListInsert .= '$'.$value["Field"].",\n\t\t\t";
+            $paramsListUpdate .= '$'.$value["Field"].",\n\t\t\t";
             $queryFirstParams .= '`'.$value["Field"]."`,\n\t\t\t";
             $querySecondParams .= ':'.$value["Field"].",\n\t\t\t";
-            $sqlParams .= '"'.$value["Field"].'"'.' => '.'$'.$value["Field"].",\n\t\t\t";
+            $sqlParamsInsert .= '"'.$value["Field"].'"'.' => '.'$'.$value["Field"].",\n\t\t\t";
+            $sqlParamsUpdate .= '"'.$value["Field"].'"'.' => '.'$'.$value["Field"].",\n\t\t\t";
             $associativeParams .= '`'.$value["Field"].'` = :'.$value["Field"].', ';
         }
+        else if ($value["Key"] == 'PRI' && $value["Extra"] != 'auto_increment') {
+            $paramsListInsert .= '$'.$value["Field"].",\n\t\t\t";
+            $queryFirstParams .= '`'.$value["Field"]."`,\n\t\t\t";
+            $querySecondParams .= ':'.$value["Field"].",\n\t\t\t";
+            $sqlParamsInsert .= '"'.$value["Field"].'"'.' => '.'$'.$value["Field"].",\n\t\t\t";
+       }
 
         if ($value["Key"] == 'PRI') {
             $tablePK = $value["Field"];
@@ -52,15 +62,18 @@ function writeOnFile_DAO($tableNames, $tableInfo){
     '
         public static function getAll()
         {
-            $sqlstr = "select * from '.strtolower($tableName).';";  
+            $sqlstr = "select * from `'.strtolower($tableName).'`;";  
             return self::obtenerRegistros($sqlstr, array());
         }
     ';
 
+
+
+
     $getByIdFunction =
     '
 
-        public static function getById(int $'.$tablePK.')
+        public static function getById($'.$tablePK.')
         {
             $sqlstr = "SELECT * from `'.strtolower($tableName).'` where '.$tablePK.'=:'.$tablePK.';";
             $sqlParams = array("'.$tablePK.'" => $'.$tablePK.');
@@ -72,7 +85,7 @@ function writeOnFile_DAO($tableNames, $tableInfo){
     $insertFunction =
     "\n".'
         public static function insert(
-            '.$paramsList.'
+            '.$paramsListInsert.'
         ){
             $sqlstr = "INSERT INTO `'.strtolower($tableName).'` (
                 '.$queryFirstParams.')
@@ -80,7 +93,7 @@ function writeOnFile_DAO($tableNames, $tableInfo){
                 '.$querySecondParams.');";
             
             $sqlParams =[
-                '.$sqlParams.'
+                '.$sqlParamsInsert.'
             ];
 
             return self::executeNonQuery($sqlstr, $sqlParams);
@@ -90,7 +103,7 @@ function writeOnFile_DAO($tableNames, $tableInfo){
     $updateFunction =
     "\n".'
         public static function update(
-            '.$paramsList.'
+            '.$paramsListUpdate.'
             $'.$tablePK.' 
         ){
 
@@ -102,7 +115,7 @@ function writeOnFile_DAO($tableNames, $tableInfo){
 
 
             $sqlParams =[
-                '.$sqlParams.'
+                '.$sqlParamsUpdate.'
                 '.'"'.$tablePK.'" => $'.$tablePK.'
             ];
 
