@@ -30,8 +30,10 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
     class ".$singularName." extends PublicController{\n";
 
     $arrayDefinitions=
-    "
-        private ".'$viewData'."= array();";
+    '
+        private $viewData = array();
+        private $arrModeDesc = array();
+    ';
 
 
     $runFunction=
@@ -55,16 +57,24 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
     $varInit = "";
     $varCRUDSet = "";
     $arrSet = "";
+    $arrOptions = "";
 
     foreach ($tableInfo as $key => $value) {
         $varInit = $varInit ."\t\t". '$this->viewData["'.$value["Field"].'"] = "";'."\n\t";
-        $varCRUDSet = $varCRUDSet . '$this->viewData["'.$value["Field"].'"],'."\n\t\t\t\t\t\t";
+        
+        if ($value["Key"] != 'PRI') {
+            $varCRUDSet .= '$this->viewData["'.$value["Field"].'"],'."\n\t\t\t\t\t\t";
+        }
 
         if (($value["Null"] == 'NO' && $value["Key"] != 'PRI') || (in_array($value["Field"], $validationFields) && $value["Null"] != 'NO')) {
             $varInit = $varInit ."\t\t". '$this->viewData["error_'.$value["Field"].'"] = array();'."\n\t";
         } 
 
         if (in_array($value["Field"], $inputFields)) {
+            $arrayDefinitions .= '
+            private $arr_'.$value["Field"].' = array();
+            ';
+
             $varInit .= "\t\t". '$this->viewData["'.$value["Field"].'Arr"] = array();'."\n\t";
             $arrSet .= '
             $this->arr_'.$value["Field"].' = array(
@@ -72,8 +82,19 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
                 array("value" => "VAL2", "text" => "Text2"),
                 array("value" => "VAL3", "text" => "Text3"),
             );
-            $$this->viewData["'.$value["Field"].'Arr"] = $this->arr_'.$value["Field"].';
+            $this->viewData["'.$value["Field"].'Arr"] = $this->arr_'.$value["Field"].';
             '."\n";
+            
+            $arrOptions .='
+            $this->viewData["'.$value["Field"].'Arr"]
+                = \Utilities\ArrUtils::objectArrToOptionsArray(
+                    $this->arr_'.$value["Field"].',
+                    "value",
+                    "text",
+                    "value",
+                    $this->viewData["'.$value["Field"].'"]
+                );            
+            ';
         }
     }
 
@@ -240,17 +261,7 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
                     // $this->viewData["descriptive_value_here"]
                 );
 
-                /*
-                //Personalice los arreglos para los datos que van en un select o radiobutton
-                $this->viewData["enlace_arreglo"]
-                    = \Utilities\ArrUtils::objectArrToOptionsArray(
-                        $this->arreglo_definido_anteriormente,
-                        "value",
-                        "text",
-                        "value",
-                        $this->viewData["variable_plantilla"]
-                );
-                */
+                '.$arrOptions.'
 
                 if ($this->viewData["mode"] === "DSP") {
                     $this->viewData["readonly"] = true;
