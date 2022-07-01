@@ -18,9 +18,9 @@ function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $valid
 
             if (in_array($value["Field"], $inputFields)) {
                 $fieldSets .= '
-                    <fieldset>
-                        <label for="'.$value["Field"].'">'.$value["Field"].'</label>
-                        <select name="'.$value["Field"].'" id="'.$value["Field"].'" {{if readonly}} readonly disabled {{endif readonly}}>
+                    <fieldset class="row" style="border-color:transparent;">
+                        <label class="col-4" for="'.$value["Field"].'">'.$value["Field"].'</label>
+                        <select class="col-8" name="'.$value["Field"].'" id="'.$value["Field"].'" {{if readonly}} readonly disabled {{endif readonly}} style="border-radius: 0.4rem; border:none;">
                             {{foreach '.$value["Field"].'Arr}}
                             <option value="{{value}}" {{selected}}>{{text}}</option>
                             {{endfor '.$value["Field"].'Arr}}
@@ -29,10 +29,10 @@ function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $valid
                 ';
             }else{
                 $fieldSets .= '
-                    <fieldset>
-                        <label for="'.$value["Field"].'">'.$value["Field"].'</label>
-                        <input type="text" id="'.$value["Field"].'" name="'.$value["Field"].'" placeholder="Change this names/desc asap" value="{{'.$value["Field"].'}}"
-                        {{if readonly}} readonly {{endif readonly}} />
+                    <fieldset class="row" style="border-color:transparent;">
+                        <label class="col-4" for="'.$value["Field"].'">'.$value["Field"].'</label>
+                        <input class="col-8" type="text" id="'.$value["Field"].'" name="'.$value["Field"].'" placeholder="Change this names/desc asap" value="{{'.$value["Field"].'}}"
+                        {{if readonly}} readonly {{endif readonly}} style="border-radius: 0.4rem; border:none;"/>
                 ';
     
                 if (in_array($value["Field"], $validationFields)) {
@@ -57,19 +57,22 @@ function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $valid
     '
 <h1>{{mode_desc}}</h1>
 <section>
-    <form action="index.php?page=mnt_'.strtolower($singularName).'" method="post">
+    <form action="index.php?page=mnt_'.strtolower($singularName).'" method="post" class="row offset-3 col-6"
+    style="background-color:#F4F4F4; border-radius:1rem; padding:1rem; font-size:1.1rem">
+
         <input type="hidden" name="mode" value="{{mode}}" />
         <input type="hidden" name="crsf_token" value="{{crsf_token}}" />
         <input type="hidden" name="'.$tablePK.'" value="{{'.$tablePK.'}}" />
 
 '.$fieldSets.'
 
-        <fieldset>
+        <fieldset >
             {{if showBtn}}
-            <button type="submit" name="btnEnviar">{{btnEnviarText}}</button>
+            <button type="submit" name="btnEnviar" 
+                style="border-radius: 0.4rem; background-color:#ffce00; border-color:transparent; color:black;">{{btnEnviarText}}</button>
             &nbsp;
             {{endif showBtn}}
-            <button name="btnCancelar" id="btnCancelar">Cancelar</button>
+            <button name="btnCancelar" id="btnCancelar" style="border-radius: 0.4rem;">Cancelar</button>
         </fieldset>
     </form>
 </section>
@@ -79,7 +82,7 @@ function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $valid
         document.getElementById("btnCancelar").addEventListener("click", function (e) {
             e.preventDefault();
             e.stopPropagation();
-            window.location.href = "index.php?page=mnt_'.$pluralName.'";
+            window.location.href = "index.php?page=mnt_'.strtolower($pluralName).'";
         });
     });
 </script>';
