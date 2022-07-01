@@ -1,21 +1,4 @@
-<?php
-
-function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $validationFields){
-
-    $pluralName = $tableNames["pluralName"];
-    $singularName = $tableNames["singularName"];
-
-    $myfile = fopen("Generated_Scripts/"."$singularName".".php", "w") or die("Unable to open file!");
-    
-    $tablePK = "";
-    foreach ($tableInfo as $key => $value) {
-        if ($value["Key"] == 'PRI') {
-            $tablePK = $value["Field"];
-        } 
-    }
-
-    $importsAndHeads = 
-"<?php 
+<?php 
     /**Created by FileGenerator 1.0*/
     /**CRUD CONTROLLER*/
 
@@ -24,18 +7,13 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
     use Controllers\PublicController;
     use Views\Renderer;
     use Utilities\Validators;
-    use Dao\Mnt\\".$pluralName.";
+    use Dao\Mnt\Pianos;
 
 
-    class ".$singularName." extends PublicController{\n";
+    class Piano extends PublicController{
 
-    $arrayDefinitions=
-    "
-        private ".'$viewData'."= array();";
-
-
-    $runFunction=
-    "\n".' 
+        private $viewData= array();
+ 
         public function run():void
         {
             $this->init();
@@ -49,36 +27,8 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
             }
 
         $this->processView();
-        Renderer::render("mnt/'.strtolower($singularName).'", $this->viewData);
-    }';
-
-    $varInit = "";
-    $varCRUDSet = "";
-    $arrSet = "";
-
-    foreach ($tableInfo as $key => $value) {
-        $varInit = $varInit ."\t\t". '$this->viewData["'.$value["Field"].'"] = "";'."\n\t";
-        $varCRUDSet = $varCRUDSet . '$this->viewData["'.$value["Field"].'"],'."\n\t\t\t\t\t\t";
-
-        if (($value["Null"] == 'NO' && $value["Key"] != 'PRI') || (in_array($value["Field"], $validationFields) && $value["Null"] != 'NO')) {
-            $varInit = $varInit ."\t\t". '$this->viewData["error_'.$value["Field"].'"] = array();'."\n\t";
-        } 
-
-        if (in_array($value["Field"], $inputFields)) {
-            $varInit .= "\t\t". '$this->viewData["'.$value["Field"].'Arr"] = array();'."\n\t";
-            $arrSet .= '
-            $this->arr_'.$value["Field"].' = array(
-                array("value" => "VAL1", "text" => "Text1"),
-                array("value" => "VAL2", "text" => "Text2"),
-                array("value" => "VAL3", "text" => "Text3"),
-            );
-            $$this->viewData["'.$value["Field"].'Arr"] = $this->arr_'.$value["Field"].';
-            '."\n";
-        }
+        Renderer::render("mnt/piano", $this->viewData);
     }
-
-    $initFunction =
-    '
         private function init(){
             $this->viewData = array();
             $this->viewData["mode"] = "";
@@ -86,9 +36,20 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
             $this->viewData["crsf_token"] = "";
 
             //Var set guided by Table Info
-    '
-    .$varInit.
-    '       
+    		$this->viewData["pianoid"] = "";
+			$this->viewData["pianodsc"] = "";
+			$this->viewData["error_pianodsc"] = array();
+			$this->viewData["pianobio"] = "";
+			$this->viewData["error_pianobio"] = array();
+			$this->viewData["pianosales"] = "";
+			$this->viewData["error_pianosales"] = array();
+			$this->viewData["pianoimguri"] = "";
+			$this->viewData["pianoimgthb"] = "";
+			$this->viewData["pianoprice"] = "";
+			$this->viewData["error_pianoprice"] = array();
+			$this->viewData["pianoest"] = "";
+			$this->viewData["pianoestArr"] = array();
+	       
             // ------
             
             $this->viewData["btnEnviarText"] = "Guardar";
@@ -96,20 +57,24 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
             $this->viewData["showBtn"] = true;
 
             $this->arrModeDesc = array(
-                "INS"=>"Nuevo '.$singularName.'",
+                "INS"=>"Nuevo Piano",
                 "UPD"=>"Editando %s %s",
                 "DSP"=>"Detalle de %s %s",
                 "DEL"=>"Eliminando %s %s"
             );
 
             // Array Options, Change this asap.
-            '.$arrSet.'
+            
+            $this->arr_pianoest = array(
+                array("value" => "VAL1", "text" => "Text1"),
+                array("value" => "VAL2", "text" => "Text2"),
+                array("value" => "VAL3", "text" => "Text3"),
+            );
+            $$this->viewData["pianoestArr"] = $this->arr_pianoest;
+            
 
-        }';
 
-
-    $procesarGetFunction = 
-    '
+        }
     
         private function procesarGet(){
             if (isset($_GET["mode"])) {
@@ -117,49 +82,17 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
                 if (!isset($this->arrModeDesc[$this->viewData["mode"]])) {
                     error_log("Error: El modo solicitado no existe.");
                     \Utilities\Site::redirectToWithMsg(
-                        "index.php?page=mnt_'.strtolower($pluralName).'",
+                        "index.php?page=mnt_pianos",
                         "No se puede procesar su solicitud!"
                     );
                 }
             }
             if ($this->viewData["mode"] !== "INS" && isset($_GET["id"])) {
-                $this->viewData["'.$tablePK.'"] = intval($_GET["id"]);
-                $tmpArray = '.$pluralName.'::getById($this->viewData["'.$tablePK.'"]);
+                $this->viewData["pianoid"] = intval($_GET["id"]);
+                $tmpArray = Pianos::getById($this->viewData["pianoid"]);
                 \Utilities\ArrUtils::mergeFullArrayTo($tmpArray, $this->viewData);
             }
-        }';
-
-    
-    $validations = "";
-    foreach ($tableInfo as $key => $value) {
-
-        if ($value["Null"] == 'NO' && $value["Key"] != 'PRI') {
-            $validations = $validations ."\n".
-            '
-            if (Validators::IsEmpty($this->viewData["'.$value["Field"].'"])) {
-                $this->viewData["error_'.$value["Field"].'"][]
-                    = "Este campo es requerido.";
-                $hasErrors = true;
-            }  
-            ';
-        }else{
-            if ($validationFields != "") {
-                if ((in_array($value["Field"], $validationFields)) && $value["Null"] != 'NO') {
-                    $validations = $validations ."\n".
-                    '
-            if (Validators::IsEmpty($this->viewData["'.$value["Field"].'"])) {
-                $this->viewData["error_'.$value["Field"].'"][]
-                    = "Este campo es requerido.";
-                $hasErrors = true;
-            }  
-                    ';   
-                }
-            }
         }
-    }
-
-    $procesarPostFunction =
-    '
         private function procesarPost()
         {
             $hasErrors = false;
@@ -168,13 +101,41 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
                 && $_SESSION[$this->name . "crsf_token"] !== $this->viewData["crsf_token"]
             ) {
                 \Utilities\Site::redirectToWithMsg(
-                    "index.php?page=mnt_'.strtolower($pluralName).'",
+                    "index.php?page=mnt_pianos",
                     "ERROR: Algo inesperado sucedió con la petición. Intente de nuevo."
                 );
             }
 
             //Validation Zone
-        '.$validations.'
+        
+
+            if (Validators::IsEmpty($this->viewData["pianodsc"])) {
+                $this->viewData["error_pianodsc"][]
+                    = "Este campo es requerido.";
+                $hasErrors = true;
+            }  
+                    
+
+            if (Validators::IsEmpty($this->viewData["pianobio"])) {
+                $this->viewData["error_pianobio"][]
+                    = "Este campo es requerido.";
+                $hasErrors = true;
+            }  
+                    
+
+            if (Validators::IsEmpty($this->viewData["pianosales"])) {
+                $this->viewData["error_pianosales"][]
+                    = "Este campo es requerido.";
+                $hasErrors = true;
+            }  
+                    
+
+            if (Validators::IsEmpty($this->viewData["pianoprice"])) {
+                $this->viewData["error_pianoprice"][]
+                    = "Este campo es requerido.";
+                $hasErrors = true;
+            }  
+                    
             //------
             
             if (!$hasErrors) {
@@ -182,51 +143,63 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
 
                 switch($this->viewData["mode"]) {
                 case "INS":
-                    $result = '.$pluralName.'::insert(
-                        '.$varCRUDSet.'
+                    $result = Pianos::insert(
+                        $this->viewData["pianoid"],
+						$this->viewData["pianodsc"],
+						$this->viewData["pianobio"],
+						$this->viewData["pianosales"],
+						$this->viewData["pianoimguri"],
+						$this->viewData["pianoimgthb"],
+						$this->viewData["pianoprice"],
+						$this->viewData["pianoest"],
+						
                     );
 
                     if ($result) {
                             \Utilities\Site::redirectToWithMsg(
-                                "index.php?page=mnt_'.strtolower($pluralName).'",
+                                "index.php?page=mnt_pianos",
                                 "Registro Guardado Satisfactoriamente!"
                             );
                     }
                     break;
 
                 case "UPD":
-                    $result = '.$pluralName.'::update(
-                        '.$varCRUDSet.'
-                        intval($this->viewData["'.$tablePK.'"])
+                    $result = Pianos::update(
+                        $this->viewData["pianoid"],
+						$this->viewData["pianodsc"],
+						$this->viewData["pianobio"],
+						$this->viewData["pianosales"],
+						$this->viewData["pianoimguri"],
+						$this->viewData["pianoimgthb"],
+						$this->viewData["pianoprice"],
+						$this->viewData["pianoest"],
+						
+                        intval($this->viewData["pianoid"])
                     );
 
                     if ($result) {
                         \Utilities\Site::redirectToWithMsg(
-                            "index.php?page=mnt_'.strtolower($pluralName).'",
+                            "index.php?page=mnt_pianos",
                             "Registro Actualizado Satisfactoriamente!"
                         );
                     }
                     break;
 
                 case "DEL":
-                    $result = '.$pluralName.'::delete(
-                        intval($this->viewData["'.$tablePK.'"])
+                    $result = Pianos::delete(
+                        intval($this->viewData["pianoid"])
                     );
 
                     if ($result) {
                         \Utilities\Site::redirectToWithMsg(
-                            "index.php?page=mnt_'.strtolower($pluralName).'",
+                            "index.php?page=mnt_pianos",
                             "Registro Eliminado Satisfactoriamente!"
                         );
                     }
                     break;
                 }
             }
-        }';
-
-
-    $processViewFunction=
-    '
+        }
         private function processView(){
             
             if ($this->viewData["mode"] === "INS") {
@@ -235,7 +208,7 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
             } else {
                 $this->viewData["mode_desc"]  = sprintf(
                     $this->arrModeDesc[$this->viewData["mode"]],
-                    $this->viewData["'.$tablePK.'"],
+                    $this->viewData["pianoid"],
                     "Cambie este valor por uno más descriptivo-Linea:171"
                     // $this->viewData["descriptive_value_here"]
                 );
@@ -267,20 +240,4 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
             $this->viewData["crsf_token"] = md5(getdate()[0] . $this->name);
             $_SESSION[$this->name . "crsf_token"] = $this->viewData["crsf_token"];
         }
-    }?>';
-
-
-    
-
-    fwrite($myfile, 
-        $importsAndHeads. 
-        $arrayDefinitions. 
-        $runFunction.
-        $initFunction.
-        $procesarGetFunction.
-        $procesarPostFunction.
-        $processViewFunction);
-    fclose($myfile);
-}
-
-?>
+    }?>

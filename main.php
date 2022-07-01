@@ -4,6 +4,7 @@
     include_once 'Functions/GenerateLC.php';
     include_once 'Functions/GenerateDAO.php';
     include_once 'Functions/GenerateL_TMP.php';
+    include_once 'Functions/GenerateF_TMP.php';
 
     $showAlert = false;
     $showError = false;
@@ -13,6 +14,7 @@
 
     $inputFields = "";
     $validationFields = "";
+    $descriptiveField = "";
 
     if (isset($_POST["btnConfirm"])) {
 
@@ -38,11 +40,13 @@
                 $tableNames["pluralName"] = $_POST["pluralTableName"];
                 $tableNames["singularName"] = $_POST["singularTableName"];
                 $tableNames["tableName"] = $_POST["tableName"];
+                $tableNames["descriptiveField"] = $_POST["descriptiveField"];
 
                 writeOnFile_MainController($tableNames, $TableData, $inputFields, $validationFields);
                 writeOnFile_ListController($tableNames, $TableData);
                 writeOnFile_DAO($tableNames, $TableData);
                 writeOnFile_ListTemplate($tableNames, $TableData);
+                writeOnFile_FormTemplate($tableNames, $TableData, $inputFields, $validationFields);
 
                 $showAlert = true;
                 $successMsg = "Files Created Successfully.";
@@ -95,10 +99,11 @@
                 <input type="text" class="form-control" id="arrayVariables" name="arrayVariables" placeholder="pianoest, pianocat">
             </div>
             
-            <div class="form-group" id="nameField" >
-                <label for="nameField">Field destinated for name or description</label>
-                <input type="text" class="form-control" id="nameField" name="nameField" placeholder="pianodsc">
+            <div class="form-group" id="descriptiveFieldDiv" >
+                <label for="descriptiveField">Field destinated for name or description</label>
+                <input type="text" class="form-control" id="descriptiveField" name="descriptiveField" placeholder="pianodsc" required>
             </div>
+
             <div class="form-group" id="validationFieldsDiv" >
                 <label for="validationFields">Field that need a [not empty] validation (Separated with comma). System will automatically take Fields from table with Null = false</label>
                 <input type="text" class="form-control" id="validationFields" name="validationFields" placeholder="pianodsc, pianocat">

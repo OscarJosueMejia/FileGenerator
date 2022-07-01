@@ -7,14 +7,10 @@ function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $valid
 
     $myfile = fopen("Generated_Scripts/".strtolower($singularName).".view.tpl", "w") or die("Unable to open file!");
     
-    $headerList = "";
-    $rowList = "";
     $fieldSets = "";
 
     $tablePK = "";
     foreach ($tableInfo as $key => $value) {
-        $headerList .= "<th>".$value["Field"]."</th>\n";
-        $rowList .= "<td>{{".$value["Field"]."}}</td>\n";
         
         if ($value["Key"] == 'PRI') {
             $tablePK = $value["Field"];
@@ -35,7 +31,7 @@ function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $valid
                 $fieldSets .= '
                     <fieldset>
                         <label for="'.$value["Field"].'">'.$value["Field"].'</label>
-                        <input type="text" id='.$value["Field"].' name='.$value["Field"].' placeholder="Change this names/desc asap" value="{{'.$value["Field"].'}}"
+                        <input type="text" id="'.$value["Field"].'" name="'.$value["Field"].'" placeholder="Change this names/desc asap" value="{{'.$value["Field"].'}}"
                         {{if readonly}} readonly {{endif readonly}} />
                 ';
     
@@ -66,8 +62,7 @@ function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $valid
         <input type="hidden" name="crsf_token" value="{{crsf_token}}" />
         <input type="hidden" name="'.$tablePK.'" value="{{'.$tablePK.'}}" />
 
-
-
+'.$fieldSets.'
 
         <fieldset>
             {{if showBtn}}
@@ -84,7 +79,7 @@ function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $valid
         document.getElementById("btnCancelar").addEventListener("click", function (e) {
             e.preventDefault();
             e.stopPropagation();
-            window.location.href = "index.php?page=mnt_pianos";
+            window.location.href = "index.php?page=mnt_'.$pluralName.'";
         });
     });
 </script>';
