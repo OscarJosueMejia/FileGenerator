@@ -85,7 +85,8 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
             $varCRUDSetInsert .= '$this->viewData["'.$value["Field"].'"],'."\n\t\t\t\t\t\t";
         }
 
-        if (($value["Null"] == 'NO' && $value["Key"] != 'PRI') || (in_array($value["Field"], $validationFields) && $value["Null"] != 'NO')) {
+        // if (($value["Null"] == 'NO' && $value["Key"] != 'PRI') || (in_array($value["Field"], $validationFields) && $value["Null"] != 'NO')) {
+        if (($value["Null"] == 'NO' && $value["Key"] != 'PRI') || (in_array($value["Field"], $validationFields))) {
             $varInit = $varInit ."\t\t". '$this->viewData["error_'.$value["Field"].'"] = array();'."\n\t";
         } 
 
@@ -184,7 +185,8 @@ function writeOnFile_MainController($tableNames, $tableInfo, $inputFields, $vali
             ';
         }else{
             if ($validationFields != "") {
-                if ((in_array($value["Field"], $validationFields)) && $value["Null"] != 'NO') {
+                // if ((in_array($value["Field"], $validationFields)) && $value["Null"] != 'NO') {
+                if ((in_array($value["Field"], $validationFields))) {
                     $validations = $validations ."\n".
                     '
             if (Validators::IsEmpty($this->viewData["'.$value["Field"].'"])) {

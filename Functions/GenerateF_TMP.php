@@ -14,6 +14,23 @@ function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $valid
         
         if ($value["Key"] == 'PRI') {
             $tablePK = $value["Field"];
+            if ($value["Extra"] != 'auto_increment') {
+                $fieldSets .= '
+                <fieldset class="row" style="border-color:transparent;">
+                    <label class="col-4" for="'.$value["Field"].'">'.$value["Field"].'</label>
+                    <input class="col-8" type="text" id="'.$value["Field"].'" name="'.$value["Field"].'" placeholder="Change this names/desc asap" value="{{'.$value["Field"].'}}"
+                    {{if readonly}} readonly {{endif readonly}} style="border-radius: 0.4rem; border:none;"/>
+                ';
+
+                if (in_array($value["Field"], $validationFields)) {
+                    $fieldSets .= '
+                        {{if error_'.$value["Field"].'}} {{foreach error_'.$value["Field"].'}} <div class="error">{{this}}</div>
+                        {{endfor error_'.$value["Field"].'}}
+                        {{endif error_'.$value["Field"].'}}
+                    ';
+                }
+                $fieldSets .= '</fieldset>';
+            }
         }else{
 
             if (in_array($value["Field"], $inputFields)) {
@@ -45,8 +62,8 @@ function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $valid
                 $fieldSets .= '</fieldset>';
             }
         }
-
     }
+
 
     
 
