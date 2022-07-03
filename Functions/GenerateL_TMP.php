@@ -31,7 +31,7 @@ function writeOnFile_ListTemplate($tableNames, $tableInfo){
 
     $scriptContent = 
     '
-<h1>Trabajar con '.$pluralName.'</h1>
+<h1 class="center">Trabajar con '.$pluralName.'</h1>
 <section>
 
 </section>

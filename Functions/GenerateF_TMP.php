@@ -72,7 +72,7 @@ function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $valid
 
     $scriptContent = 
     '
-<h1>{{mode_desc}}</h1>
+<h1  class="center">{{mode_desc}}</h1>
 <section>
     <form action="index.php?page=mnt_'.strtolower($singularName).'" method="post" class="row offset-3 col-6"
     style="background-color:#F4F4F4; border-radius:1rem; padding:1rem; font-size:1.1rem">
@@ -83,7 +83,7 @@ function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $valid
 
 '.$fieldSets.'
 
-        <fieldset >
+        <fieldset class="row flex-center" style="border-color:transparent; margin-top:1rem">
             {{if showBtn}}
             <button type="submit" name="btnEnviar" 
                 style="border-radius: 0.4rem; background-color:#ffce00; border-color:transparent; color:black;">{{btnEnviarText}}</button>

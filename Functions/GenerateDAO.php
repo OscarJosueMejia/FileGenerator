@@ -49,92 +49,95 @@ function writeOnFile_DAO($tableNames, $tableInfo){
 
     $importsAndHeads = 
 "<?php 
-    /**Created by FileGenerator 1.0
-     * DAO file
-    */
+/**Created by FileGenerator 1.0
+ * DAO file
+*/
 
-    namespace Dao\Mnt;
-    use Dao\Table;
-    
-    class ".$pluralName." extends Table {\n";
+namespace Dao\Mnt;
+use Dao\Table;
 
-    $getAllFunction =
-    '
-        public static function getAll()
-        {
-            $sqlstr = "select * from `'.strtolower($tableName).'`;";  
-            return self::obtenerRegistros($sqlstr, array());
-        }
-    ';
+class ".$pluralName." extends Table {\n";
 
-
+$getAllFunction =
+'
+    public static function getAll()
+    {
+        $sqlstr = "select * from `'.strtolower($tableName).'`;";  
+        return self::obtenerRegistros($sqlstr, array());
+    }
+';
 
 
-    $getByIdFunction =
-    '
+$getByIdFunction =
+'
 
-        public static function getById($'.$tablePK.')
-        {
-            $sqlstr = "SELECT * from `'.strtolower($tableName).'` where '.$tablePK.'=:'.$tablePK.';";
-            $sqlParams = array("'.$tablePK.'" => $'.$tablePK.');
-            
-            return self::obtenerUnRegistro($sqlstr, $sqlParams);
-        }
-    ';
+    public static function getById($'.$tablePK.')
+    {
+        $sqlstr = "SELECT * from `'.strtolower($tableName).'` where '.$tablePK.'=:'.$tablePK.';";
+        $sqlParams = array("'.$tablePK.'" => $'.$tablePK.');
+        
+        return self::obtenerUnRegistro($sqlstr, $sqlParams);
+    }
+';
 
-    $insertFunction =
-    "\n".'
-        public static function insert(
-            '.$paramsListInsert.'
-        ){
-            $sqlstr = "INSERT INTO `'.strtolower($tableName).'` (
-                '.$queryFirstParams.')
-            VALUES(
-                '.$querySecondParams.');";
-            
-            $sqlParams =[
-                '.$sqlParamsInsert.'
-            ];
+$insertFunction =
+"\n".'
+    public static function insert(
+        '.$paramsListInsert.'
+    ){
+        $sqlstr = "INSERT INTO `'.strtolower($tableName).'` (
+            '.$queryFirstParams.')
+        VALUES(
+            '.$querySecondParams.');";
+        
+        $sqlParams =[
+            '.$sqlParamsInsert.'
+        ];
 
-            return self::executeNonQuery($sqlstr, $sqlParams);
-        }
-    ';
+        return self::executeNonQuery($sqlstr, $sqlParams);
+    }
+';
 
-    $updateFunction =
-    "\n".'
-        public static function update(
-            '.$paramsListUpdate.'
-            $'.$tablePK.' 
-        ){
+$updateFunction =
+"\n".'
+    public static function update(
+        '.$paramsListUpdate.'
+        $'.$tablePK.' 
+    ){
 
-            $sqlstr = "UPDATE `'.strtolower($tableName).'` SET
+        $sqlstr = "UPDATE `'.strtolower($tableName).'` SET
 
-            '.$associativeParams.'
+        '.$associativeParams.'
 
-            where `'.$tablePK.'`=:'.$tablePK.';";
+        where `'.$tablePK.'`=:'.$tablePK.';";
 
 
-            $sqlParams =[
-                '.$sqlParamsUpdate.'
-                '.'"'.$tablePK.'" => $'.$tablePK.'
-            ];
-
-            return self::executeNonQuery($sqlstr, $sqlParams);
-        }
-    ';
-
-    $deleteFunction =
-    "\n".'
-        public static function delete($'.$tablePK.'){
-            $sqlstr = "DELETE from `'.strtolower($tableName).'` where '.$tablePK.'=:'.$tablePK.';";
-
-            $sqlParams = [
+        $sqlParams =[
+            '.$sqlParamsUpdate.'
             '.'"'.$tablePK.'" => $'.$tablePK.'
-            ];
+        ];
 
-            return self::executeNonQuery($sqlstr, $sqlParams);
-            }
-        }?>';
+        return self::executeNonQuery($sqlstr, $sqlParams);
+    }
+';
+
+$deleteFunction =
+"\n".'
+    public static function delete($'.$tablePK.'){
+        $sqlstr = "DELETE from `'.strtolower($tableName).'` where '.$tablePK.'=:'.$tablePK.';";
+
+        $sqlParams = [
+        '.'"'.$tablePK.'" => $'.$tablePK.'
+        ];
+        
+        try {
+        return self::executeNonQuery($sqlstr, $sqlParams);
+        } catch (\Throwable $th) {
+            echo "<h2>ERROR: No se puede eliminar este registro.</h2>"."\n"."$th";
+            die;
+        }
+    }
+}?>';
 
 
     fwrite($myfile,

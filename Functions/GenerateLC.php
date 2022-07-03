@@ -9,27 +9,25 @@ function writeOnFile_ListController($tableNames, $tableInfo){
     
     $ScriptContent = 
 '<?php 
-    /**Created by FileGenerator 1.0*/
-    /**LIST CONTROLLER*/
+/**Created by FileGenerator 1.0*/
+/**LIST CONTROLLER*/
 
-    namespace Controllers\Mnt;
+namespace Controllers\Mnt;
 
-    use Controllers\PublicController;
-    use Dao\Mnt\\'.$pluralName.' as '.$DaoName.';
-    use Views\Renderer;
-    
-    class '.$pluralName.' extends PublicController
+use Controllers\PublicController;
+use Dao\Mnt\\'.$pluralName.' as '.$DaoName.';
+use Views\Renderer;
+
+class '.$pluralName.' extends PublicController
+{
+    public function run():void
     {
-        public function run():void
-        {
-            $viewData = array();
-            $viewData["'.$pluralName.'"] = '.$DaoName.'::getAll();
-          
-            Renderer::render("mnt/'.strtolower($pluralName).'", $viewData);
-        }
+        $viewData = array();
+        $viewData["'.$pluralName.'"] = '.$DaoName.'::getAll();
+        
+        Renderer::render("mnt/'.strtolower($pluralName).'", $viewData);
     }
-    
-    ?>';
+}';
 
 
 

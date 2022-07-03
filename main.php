@@ -35,7 +35,7 @@
 
             if ($TableData == false) {
                 $showError = true;
-                $errorLog = "There is a problem with Table or it does not exists.";
+                $errorLog = "Hay un problema con la tabla o no existe.";
             }else{
                 $tableNames["pluralName"] = $_POST["pluralTableName"];
                 $tableNames["singularName"] = $_POST["singularTableName"];
@@ -49,11 +49,11 @@
                 writeOnFile_FormTemplate($tableNames, $TableData, $inputFields, $validationFields);
 
                 $showAlert = true;
-                $successMsg = "Files Created Successfully.";
+                $successMsg = "Los archivos se crearon exitosamente! Puede encontrar los archivos en la carpeta raíz de este Sitio.";
             }
         }else{
             $showError = true;
-            $errorLog = "Table Name is required.";
+            $errorLog = "El nombre de la tabla es requerido.";
         }
     }
 ?>
@@ -92,40 +92,45 @@
             <?php } ?>
 
             <div class="form-group">
-                <label for="tableName">Table Name</label>
-                <input type="text" class="form-control" id="tableName" name="tableName" placeholder="Pianos" required>
+                <label for="tableName">Nombre de la tabla</label>
+                <input type="text" class="form-control" id="tableName" name="tableName" placeholder="Pianos" value="<?php if (isset($_POST["tableName"])){echo $_POST["tableName"];}?>" required>
             </div>
 
             <div class="form-group" id="pluralNameDiv">
-                <label for="pluralTableName">Plural Files Name</label>
-                <input type="text" class="form-control" id="pluralTableName" name="pluralTableName" placeholder="Pianos" required>
+                <label for="pluralTableName">Nombre Plural para los archivos</label>
+                <input type="text" class="form-control" id="pluralTableName" name="pluralTableName" value="<?php if (isset($_POST["pluralTableName"])){echo $_POST["pluralTableName"];}?>" placeholder="Pianos" required>
             </div>
 
             <div class="form-group" id="singularNameDiv">
-                <label for="singularTableName">Singular Files Name</label>
-                <input type="text" class="form-control" id="singularTableName" name="singularTableName" placeholder="Piano" required>
+                <label for="singularTableName">Nombre Singular para los archivos</label>
+                <input type="text" class="form-control" id="singularTableName" name="singularTableName" value="<?php if (isset($_POST["singularTableName"])){echo $_POST["singularTableName"];}?>" placeholder="Piano" required>
             </div>
             
             <div class="form-group" id="arrayVariablesDiv" >
-                <label for="arrayVariables">Fields that need a [select] input (Separated with comma)</label>
-                <input type="text" class="form-control" id="arrayVariables" name="arrayVariables" placeholder="pianoest, pianocat">
+                <label for="arrayVariables">Campos que requieren un Select (Separados por coma)</label>
+                <input type="text" class="form-control" id="arrayVariables" name="arrayVariables" value="<?php if (isset($_POST["arrayVariables"])){echo $_POST["arrayVariables"];}?>" placeholder="pianoest, pianocat">
             </div>
             
             <div class="form-group" id="descriptiveFieldDiv" >
-                <label for="descriptiveField">Field destinated for name or description</label>
-                <input type="text" class="form-control" id="descriptiveField" name="descriptiveField" placeholder="pianodsc" required>
+                <label for="descriptiveField">Campo descriptivo (Utilizado para el modo DSP)</label>
+                <input type="text" class="form-control" id="descriptiveField" name="descriptiveField" value="<?php if (isset($_POST["descriptiveField"])){echo $_POST["descriptiveField"];}?>" placeholder="pianodsc" required>
             </div>
 
             <div class="form-group" id="validationFieldsDiv" >
-                <label for="validationFields">Field that need a [not empty] validation (Separated with comma). System will automatically take Fields from table with Null = false</label>
-                <input type="text" class="form-control" id="validationFields" name="validationFields" placeholder="pianodsc, pianocat">
+                <label for="validationFields">Campos que requieren validación "Not Empty" (Separados por coma). El sistema automáticamente tomará los campos con Null = Yes</label>
+                <input type="text" class="form-control" id="validationFields" name="validationFields" value="<?php if (isset($_POST["validationFields"])){echo $_POST["validationFields"];}?>" placeholder="pianodsc, pianocat">
             </div>
 
             <div class="text-center mt-5">
-                <button type="submit" name="btnConfirm" class="btn btn-primary mb-2">Generate</button>       
+                <button type="submit" name="btnConfirm" class="btn btn-primary mb-2">Generar</button>  <br>
             </div>
 
         </form>
-    </main>    
+
+        
+    </main> 
+    <footer class="text-center mt-5">
+        <img src="https://firebasestorage.googleapis.com/v0/b/servientregasbd.appspot.com/o/poweredbyblack.png?alt=media&token=7299b84d-af75-456f-a9e5-36dce64dd672" width="400px" alt="">
+    </footer>
 </body>
 </html>
