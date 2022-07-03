@@ -1,4 +1,12 @@
 <?php
+/**
+ * PHP Version 7
+ * Form View Template Script - File Generator
+ *
+ * @category Functions 
+ * @author   Oscar Josue Mejia Seren 
+ * @version 1.0
+ */
 
 function writeOnFile_FormTemplate($tableNames, $tableInfo,  $inputFields, $validationFields){
 

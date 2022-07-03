@@ -1,4 +1,12 @@
 <?php
+/**
+ * PHP Version 7
+ * List Controller Script - File Generator
+ *
+ * @category Functions 
+ * @author   Oscar Josue Mejia Seren 
+ * @version 1.0
+ */
 
 function writeOnFile_ListController($tableNames, $tableInfo){
 
@@ -9,8 +17,6 @@ function writeOnFile_ListController($tableNames, $tableInfo){
     
     $ScriptContent = 
 '<?php 
-/**Created by FileGenerator 1.0*/
-/**LIST CONTROLLER*/
 
 namespace Controllers\Mnt;
 

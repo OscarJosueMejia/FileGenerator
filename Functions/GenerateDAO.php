@@ -1,4 +1,12 @@
 <?php
+/**
+ * PHP Version 7
+ * Dao Script - File Generator
+ *
+ * @category Functions 
+ * @author   Oscar Josue Mejia Seren 
+ * @version 1.0
+ */
 
 function writeOnFile_DAO($tableNames, $tableInfo){
 
@@ -47,7 +55,7 @@ function writeOnFile_DAO($tableNames, $tableInfo){
     $querySecondParams = substr_replace($querySecondParams ,"", -1);
     $associativeParams = substr_replace($associativeParams ,"", -1);
 
-    $importsAndHeads = 
+$importsAndHeads = 
 "<?php 
 /**Created by FileGenerator 1.0
  * DAO file

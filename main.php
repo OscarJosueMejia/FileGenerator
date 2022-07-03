@@ -1,4 +1,13 @@
 <?php
+/**
+ * PHP Version 7
+ * Main Script - File Generator
+ *
+ * @category General 
+ * @author   Oscar Josue Mejia Seren 
+ * @version 1.0
+ */
+
     include_once 'config.php';
     include_once 'Functions/GenerateMC.php';
     include_once 'Functions/GenerateLC.php';

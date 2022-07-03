@@ -1,4 +1,13 @@
 <?php
+/**
+ * PHP Version 7
+ * DB Configuration Script - File Generator
+ *
+ * @category General 
+ * @author   Oscar Josue Mejia Seren 
+ * @version 1.0
+ */
+
     define("HOST", "mysql:host=localhost; dbname=nw202202");
     define("USER", "nw202202user");
     define("PASS", "nw202202paoc");
