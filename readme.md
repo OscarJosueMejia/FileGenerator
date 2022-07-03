@@ -14,3 +14,5 @@
 * Nombre Plural de los archivos
 * Nombre Singular de los archivos
 * Campo descriptivo
+
+#### Powered by MejiaSoc Devs. Oscar Josué Mejía Serén
