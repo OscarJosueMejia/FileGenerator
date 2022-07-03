@@ -1,4 +1,7 @@
 ## MVC File Generator
+
+## Important! Create new folder called 'Generated_Scripts' in root directory of this tool.  
+
 ## This tool generates follow .php/.view.tpl files:
 * List Controller
 * Main Controller
