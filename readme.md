@@ -1,6 +1,6 @@
 ## MVC File Generator
 
-## Important! Create new folder called 'Generated_Scripts' in root directory of this tool.  
+## FIRST STEP: Change HOST USER and PASS values on config.php to use with your MySQL credentials and tables.
 
 ## This tool generates follow .php/.view.tpl files:
 * List Controller
@@ -8,9 +8,6 @@
 * Dao File
 * Form View
 * List View
-
-
-## Change HOST USER and PASS values on config.php to use with your MySQL credentials and tables
 
 ### On website, next fields are required:
 * Nombre de la Tabla
