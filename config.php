@@ -21,7 +21,7 @@
                 $this->tableData = array();
                 $this->databaseLink = new PDO(HOST, USER, PASS);
             } catch (\Throwable $th) {
-                echo "<h3 style='color:red;'>Verifique los parámetros HOST, USER, PASS de config.php</h3>";
+                echo "<h3 style='color:red;'>Verifique/Cambie los parámetros locales: HOST, USER, PASS de config.php</h3>";
                 die;
             }
         }

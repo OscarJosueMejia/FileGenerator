@@ -2,7 +2,7 @@
 
 ## FIRST STEP: Change HOST USER and PASS values on config.php to use with your MySQL credentials and tables.
 
-## This tool generates follow .php/.view.tpl files:
+## This tool generates the following .php/.view.tpl files:
 * List Controller
 * Main Controller
 * Dao File
