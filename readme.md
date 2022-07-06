@@ -1,6 +1,7 @@
 ## MVC File Generator
 
 ## FIRST STEP: Change HOST USER and PASS values on config.php to use with your MySQL credentials and tables.
+## Use in Apache's root folder (htdocs->filegenerator->.php_files&folders_with_functions)
 
 ## This tool generates the following .php/.view.tpl files:
 * List Controller
