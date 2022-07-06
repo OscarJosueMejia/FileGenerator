@@ -9,16 +9,21 @@
  */
 
     define("HOST", "mysql:host=localhost; dbname=nw202202");
-    define("USER", "nw202202user");
-    define("PASS", "nw202202paoc");
+    define("USER", "");
+    define("PASS", "");
 
     class GetTableDesc {
         private $tableData;
         private $databaseLink;
     
         public function __construct() {
-            $this->tableData = array();
-            $this->databaseLink = new PDO(HOST, USER, PASS);
+            try {
+                $this->tableData = array();
+                $this->databaseLink = new PDO(HOST, USER, PASS);
+            } catch (\Throwable $th) {
+                echo "<h3 style='color:red;'>Verifique los parámetros HOST, USER, PASS de config.php</h3>";
+                die;
+            }
         }
     
         private function setNames() {
