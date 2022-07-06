@@ -46,19 +46,27 @@
                 $showError = true;
                 $errorLog = "Hay un problema con la tabla o no existe.";
             }else{
-                $tableNames["pluralName"] = $_POST["pluralTableName"];
-                $tableNames["singularName"] = $_POST["singularTableName"];
-                $tableNames["tableName"] = $_POST["tableName"];
-                $tableNames["descriptiveField"] = $_POST["descriptiveField"];
-
-                writeOnFile_MainController($tableNames, $TableData, $inputFields, $validationFields);
-                writeOnFile_ListController($tableNames, $TableData);
-                writeOnFile_DAO($tableNames, $TableData);
-                writeOnFile_ListTemplate($tableNames, $TableData);
-                writeOnFile_FormTemplate($tableNames, $TableData, $inputFields, $validationFields);
-
-                $showAlert = true;
-                $successMsg = "Los archivos se crearon exitosamente! Puede encontrar los archivos en la carpeta raíz de este Sitio.";
+                try {
+                    if (!is_dir("Generated_Scripts/Dao")) {
+                        mkdir("Generated_Scripts/Dao",0777,true);
+                    }
+                    $tableNames["pluralName"] = $_POST["pluralTableName"];
+                    $tableNames["singularName"] = $_POST["singularTableName"];
+                    $tableNames["tableName"] = $_POST["tableName"];
+                    $tableNames["descriptiveField"] = $_POST["descriptiveField"];
+                    
+                    writeOnFile_MainController($tableNames, $TableData, $inputFields, $validationFields);
+                    writeOnFile_ListController($tableNames, $TableData);
+                    writeOnFile_DAO($tableNames, $TableData);
+                    writeOnFile_ListTemplate($tableNames, $TableData);
+                    writeOnFile_FormTemplate($tableNames, $TableData, $inputFields, $validationFields);
+    
+                    $showAlert = true;
+                    $successMsg = "Los archivos se crearon exitosamente! Puede encontrar los archivos en la carpeta raíz de este Sitio.";
+                } catch (\Throwable $th) {
+                    $showError = true;
+                    $errorLog = "Algo salió mal.\n".$th;
+                }
             }
         }else{
             $showError = true;
